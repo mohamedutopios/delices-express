@@ -1,0 +1,81 @@
+# Dockerfile de production multi-stage
+# Optimisé pour une image légère et sécurisée
+
+# Stage 1: Builder
+FROM python:3.11-slim as builder
+
+WORKDIR /app
+
+# Installer les dépendances de build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Créer un virtualenv
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Installer les dépendances Python (incluant psycopg2 pour PostgreSQL)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt psycopg2-binary==2.9.9
+
+
+# Stage 2: Production
+FROM python:3.11-slim as production
+
+# Métadonnées
+LABEL maintainer="Délice Express"
+LABEL description="Application de livraison de repas préparés - Production"
+LABEL version="1.0"
+
+# Variables d'environnement
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Installer les dépendances runtime uniquement
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Créer un utilisateur non-root
+RUN groupadd -r delice && useradd -r -g delice delice
+
+WORKDIR /app
+
+# Copier le virtualenv depuis le builder
+COPY --from=builder /opt/venv /opt/venv
+
+# Copier le code de l'application
+COPY --chown=delice:delice app.py .
+COPY --chown=delice:delice templates/ templates/
+
+# Utiliser l'utilisateur non-root
+USER delice
+
+# Exposer le port
+EXPOSE 5000
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:5000/ || exit 1
+
+# Commande de démarrage optimisée pour la production
+CMD ["gunicorn", \
+     "--bind", "0.0.0.0:5000", \
+     "--workers", "4", \
+     "--threads", "2", \
+     "--worker-class", "gthread", \
+     "--timeout", "120", \
+     "--keep-alive", "5", \
+     "--max-requests", "1000", \
+     "--max-requests-jitter", "50", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-", \
+     "--capture-output", \
+     "app:app"]

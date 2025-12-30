@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Délice Express{% endblock %} | Livraison de Repas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-cream: #FDF8F3;
+            --color-warm-white: #FFFAF5;
+            --color-terracotta: #C4704B;
+            --color-terracotta-dark: #A85A3A;
+            --color-olive: #6B7B5C;
+            --color-olive-light: #8B9B7C;
+            --color-charcoal: #2D2D2D;
+            --color-warm-gray: #6B6560;
+            --color-light-gray: #E8E2DC;
+            --color-gold: #D4A853;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, sans-serif;
+            --shadow-soft: 0 4px 20px rgba(45, 45, 45, 0.08);
+            --shadow-medium: 0 8px 30px rgba(45, 45, 45, 0.12);
+            --shadow-hover: 0 12px 40px rgba(45, 45, 45, 0.16);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--color-cream);
+            color: var(--color-charcoal);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--color-warm-white);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-terracotta);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-terracotta), var(--color-gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--color-charcoal);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--color-terracotta);
+            background: rgba(196, 112, 75, 0.08);
+        }
+
+        .nav-link.cart-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cart-badge {
+            background: var(--color-terracotta);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-terracotta), var(--color-terracotta-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(196, 112, 75, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 112, 75, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--color-warm-white);
+            color: var(--color-charcoal);
+            border: 2px solid var(--color-light-gray);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-terracotta);
+            color: var(--color-terracotta);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--color-terracotta);
+            border: 2px solid var(--color-terracotta);
+        }
+
+        .btn-outline:hover {
+            background: var(--color-terracotta);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .flash {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            box-shadow: var(--shadow-medium);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .flash-success {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .flash-error {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 4px solid #EF5350;
+        }
+
+        .flash-warning {
+            background: #FFF8E1;
+            color: #F57F17;
+            border-left: 4px solid #FFB300;
+        }
+
+        .flash-info {
+            background: #E3F2FD;
+            color: #1565C0;
+            border-left: 4px solid #42A5F5;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--color-warm-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--color-charcoal);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--color-light-gray);
+            border-radius: var(--radius-md);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--color-warm-white);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-terracotta);
+            box-shadow: 0 0 0 3px rgba(196, 112, 75, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--color-warm-gray);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-charcoal);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: var(--color-warm-gray);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--color-charcoal);
+            color: var(--color-light-gray);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            font-family: var(--font-display);
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--color-light-gray);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover {
+            color: var(--color-gold);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 2rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: var(--color-warm-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-vegetarian {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .badge-vegan {
+            background: #F1F8E9;
+            color: #558B2F;
+        }
+
+        .badge-status {
+            padding: 0.5rem 1rem;
+        }
+
+        .badge-pending {
+            background: #FFF8E1;
+            color: #F57F17;
+        }
+
+        .badge-preparing {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .badge-delivering {
+            background: #F3E5F5;
+            color: #7B1FA2;
+        }
+
+        .badge-delivered {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mb-4 { margin-bottom: 2rem; }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <span class="logo-icon">🍽️</span>
+                Délice Express
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="nav-link">Menu</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('orders') }}" class="nav-link">Mes Commandes</a></li>
+                    <li><a href="{{ url_for('profile') }}" class="nav-link">Mon Profil</a></li>
+                    <li>
+                        <a href="{{ url_for('cart') }}" class="nav-link cart-link">
+                            🛒 Panier
+                            <span class="cart-badge" id="cart-count">0</span>
+                        </a>
+                    </li>
+                    <li><a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}" class="nav-link">Connexion</a></li>
+                    <li><a href="{{ url_for('register') }}" class="btn btn-primary btn-small">S'inscrire</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {% if category == 'success' %}✓{% elif category == 'error' %}✕{% elif category == 'warning' %}⚠{% else %}ℹ{% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Délice Express</h4>
+                <p>Des repas préparés avec amour, livrés chez vous en un clin d'œil.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Navigation</h4>
+                <a href="{{ url_for('index') }}">Menu</a>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('orders') }}">Mes Commandes</a>
+                    <a href="{{ url_for('profile') }}">Mon Profil</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Connexion</a>
+                    <a href="{{ url_for('register') }}">Inscription</a>
+                {% endif %}
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>📞 01 23 45 67 89</p>
+                <p>📧 contact@delice-express.fr</p>
+                <p>📍 Paris, France</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Délice Express. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mettre à jour le compteur du panier
+        function updateCartCount() {
+            fetch('/api/cart/count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('cart-count');
+                    if (badge) {
+                        badge.textContent = data.count;
+                        badge.style.display = data.count > 0 ? 'inline' : 'none';
+                    }
+                })
+                .catch(() => {});
+        }
+
+        // Auto-dismiss flash messages
+        setTimeout(() => {
+            const flashes = document.querySelectorAll('.flash');
+            flashes.forEach(flash => {
+                flash.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => flash.remove(), 300);
+            });
+        }, 4000);
+
+        // Initial cart count update
+        updateCartCount();
+
+        // ==================== AUTOCOMPLÉTION ADRESSE ====================
+        // Utilise l'API Adresse du gouvernement français (gratuite)
+        class AddressAutocomplete {
+            constructor(inputElement, options = {}) {
+                this.input = inputElement;
+                this.minChars = options.minChars || 3;
+                this.debounceTime = options.debounceTime || 300;
+                this.onSelect = options.onSelect || null;
+                
+                this.suggestionsContainer = null;
+                this.debounceTimer = null;
+                this.selectedIndex = -1;
+                this.suggestions = [];
+                
+                this.init();
+            }
+            
+            init() {
+                // Créer le conteneur de suggestions
+                this.createSuggestionsContainer();
+                
+                // Event listeners
+                this.input.addEventListener('input', (e) => this.handleInput(e));
+                this.input.addEventListener('keydown', (e) => this.handleKeydown(e));
+                this.input.addEventListener('blur', () => this.hideSuggestions(200));
+                this.input.addEventListener('focus', () => {
+                    if (this.suggestions.length > 0) {
+                        this.showSuggestions();
+                    }
+                });
+                
+                // Empêcher la soumission du formulaire avec Entrée si suggestions visibles
+                this.input.closest('form')?.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && this.suggestionsContainer.style.display !== 'none') {
+                        e.preventDefault();
+                    }
+                });
+            }
+            
+            createSuggestionsContainer() {
+                // Wrapper pour positionnement relatif
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                this.input.parentNode.insertBefore(wrapper, this.input);
+                wrapper.appendChild(this.input);
+                
+                // Container des suggestions
+                this.suggestionsContainer = document.createElement('div');
+                this.suggestionsContainer.className = 'address-suggestions';
+                this.suggestionsContainer.style.cssText = `
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: white;
+                    border: 2px solid var(--color-light-gray, #E8E2DC);
+                    border-top: none;
+                    border-radius: 0 0 12px 12px;
+                    max-height: 250px;
+                    overflow-y: auto;
+                    z-index: 1000;
+                    display: none;
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+                `;
+                wrapper.appendChild(this.suggestionsContainer);
+            }
+            
+            handleInput(e) {
+                const query = e.target.value.trim();
+                
+                clearTimeout(this.debounceTimer);
+                
+                if (query.length < this.minChars) {
+                    this.hideSuggestions();
+                    return;
+                }
+                
+                this.debounceTimer = setTimeout(() => {
+                    this.fetchSuggestions(query);
+                }, this.debounceTime);
+            }
+            
+            handleKeydown(e) {
+                if (this.suggestionsContainer.style.display === 'none') return;
+                
+                switch(e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        this.selectNext();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        this.selectPrevious();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (this.selectedIndex >= 0) {
+                            this.selectSuggestion(this.suggestions[this.selectedIndex]);
+                        }
+                        break;
+                    case 'Escape':
+                        this.hideSuggestions();
+                        break;
+                }
+            }
+            
+            async fetchSuggestions(query) {
+                try {
+                    const response = await fetch(
+                        `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`
+                    );
+                    const data = await response.json();
+                    
+                    this.suggestions = data.features || [];
+                    this.renderSuggestions();
+                } catch (error) {
+                    console.error('Erreur API Adresse:', error);
+                    this.suggestions = [];
+                    this.hideSuggestions();
+                }
+            }
+            
+            renderSuggestions() {
+                if (this.suggestions.length === 0) {
+                    this.hideSuggestions();
+                    return;
+                }
+                
+                this.selectedIndex = -1;
+                this.suggestionsContainer.innerHTML = this.suggestions.map((suggestion, index) => {
+                    const props = suggestion.properties;
+                    return `
+                        <div class="address-suggestion" data-index="${index}" style="
+                            padding: 12px 16px;
+                            cursor: pointer;
+                            border-bottom: 1px solid #f0f0f0;
+                            transition: background 0.2s;
+                        ">
+                            <div style="font-weight: 500; color: #2D2D2D; margin-bottom: 2px;">
+                                ${props.name || props.label}
+                            </div>
+                            <div style="font-size: 0.85em; color: #6B6560;">
+                                ${props.postcode} ${props.city}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Event listeners pour les suggestions
+                this.suggestionsContainer.querySelectorAll('.address-suggestion').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        this.selectedIndex = parseInt(el.dataset.index);
+                        this.updateSelection();
+                    });
+                    el.addEventListener('click', () => {
+                        this.selectSuggestion(this.suggestions[el.dataset.index]);
+                    });
+                });
+                
+                this.showSuggestions();
+            }
+            
+            selectNext() {
+                if (this.selectedIndex < this.suggestions.length - 1) {
+                    this.selectedIndex++;
+                    this.updateSelection();
+                }
+            }
+            
+            selectPrevious() {
+                if (this.selectedIndex > 0) {
+                    this.selectedIndex--;
+                    this.updateSelection();
+                }
+            }
+            
+            updateSelection() {
+                this.suggestionsContainer.querySelectorAll('.address-suggestion').forEach((el, index) => {
+                    el.style.background = index === this.selectedIndex ? '#FDF8F3' : 'white';
+                });
+            }
+            
+            selectSuggestion(suggestion) {
+                const props = suggestion.properties;
+                this.input.value = props.label;
+                this.hideSuggestions();
+                
+                if (this.onSelect) {
+                    this.onSelect({
+                        label: props.label,
+                        street: props.name,
+                        postcode: props.postcode,
+                        city: props.city,
+                        context: props.context,
+                        coordinates: suggestion.geometry.coordinates
+                    });
+                }
+            }
+            
+            showSuggestions() {
+                this.suggestionsContainer.style.display = 'block';
+                this.input.style.borderRadius = '12px 12px 0 0';
+            }
+            
+            hideSuggestions(delay = 0) {
+                setTimeout(() => {
+                    this.suggestionsContainer.style.display = 'none';
+                    this.input.style.borderRadius = '12px';
+                }, delay);
+            }
+        }
+        
+        // Initialiser l'autocomplétion sur tous les champs d'adresse
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-address-autocomplete]').forEach(input => {
+                new AddressAutocomplete(input);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

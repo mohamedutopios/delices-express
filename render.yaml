@@ -1,0 +1,24 @@
+# Render.com Configuration
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: delice-express
+    env: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt  # ou oregon, singapore, ohio
+    plan: free  # ou starter, standard, pro
+    healthCheckPath: /
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: STRIPE_PUBLIC_KEY
+        sync: false  # À configurer manuellement
+      - key: STRIPE_SECRET_KEY
+        sync: false  # À configurer manuellement
+    disk:
+      name: delice-data
+      mountPath: /app/data
+      sizeGB: 1  # Uniquement sur plans payants

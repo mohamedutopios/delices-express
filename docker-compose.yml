@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Application Flask
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: delice-express-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8989}:5000"
+    environment:
+      - FLASK_ENV=${FLASK_ENV:-production}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DATABASE_URL=sqlite:////app/data/meals_delivery.db
+      # Stripe (optionnel - fonctionne en mode démo si non configuré)
+      - STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY:-}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+    volumes:
+      # Persistance de la base de données SQLite
+      - delice_data:/app/data
+    networks:
+      - delice-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Option: Nginx comme reverse proxy (décommenter si nécessaire)
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: delice-express-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - web
+  #   networks:
+  #     - delice-network
+
+volumes:
+  delice_data:
+    driver: local
+    name: delice-express-data
+
+networks:
+  delice-network:
+    driver: bridge
+    name: delice-express-network

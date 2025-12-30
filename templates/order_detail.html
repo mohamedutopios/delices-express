@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+
+{% block title %}Commande #{{ order.id }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-warm-gray);
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        transition: var(--transition);
+    }
+
+    .back-link:hover {
+        color: var(--color-terracotta);
+    }
+
+    .order-detail-container {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 2rem;
+    }
+
+    .order-main {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .detail-card {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .detail-card-title {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-light-gray);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    /* Order Header */
+    .order-detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .order-id {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-charcoal);
+        margin-bottom: 0.5rem;
+    }
+
+    .order-meta {
+        font-size: 0.9rem;
+        color: var(--color-warm-gray);
+    }
+
+    .status-badge-large {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-en_attente {
+        background: #FFF8E1;
+        color: #F57F17;
+    }
+
+    .status-paiement_en_cours {
+        background: #E3F2FD;
+        color: #1565C0;
+    }
+
+    .status-en_preparation {
+        background: #E3F2FD;
+        color: #1565C0;
+    }
+
+    .status-en_livraison {
+        background: #F3E5F5;
+        color: #7B1FA2;
+    }
+
+    .status-livree {
+        background: #E8F5E9;
+        color: #2E7D32;
+    }
+
+    .status-annulee {
+        background: #FFEBEE;
+        color: #C62828;
+    }
+
+    /* Timeline */
+    .timeline-vertical {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 1rem;
+        padding-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 35px;
+        bottom: 0;
+        width: 2px;
+        background: var(--color-light-gray);
+    }
+
+    .timeline-item:last-child::before {
+        display: none;
+    }
+
+    .timeline-item.completed::before {
+        background: var(--color-olive);
+    }
+
+    .timeline-marker {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--color-light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+        z-index: 1;
+    }
+
+    .timeline-item.completed .timeline-marker {
+        background: var(--color-olive);
+        color: white;
+    }
+
+    .timeline-item.active .timeline-marker {
+        background: var(--color-terracotta);
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(196, 112, 75, 0.4); }
+        50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(196, 112, 75, 0); }
+    }
+
+    .timeline-content {
+        flex: 1;
+    }
+
+    .timeline-title {
+        font-weight: 600;
+        color: var(--color-charcoal);
+        margin-bottom: 0.25rem;
+    }
+
+    .timeline-desc {
+        font-size: 0.85rem;
+        color: var(--color-warm-gray);
+    }
+
+    /* Order Items */
+    .order-items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .order-item-detail {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--color-cream);
+        border-radius: var(--radius-md);
+    }
+
+    .order-item-img {
+        width: 70px;
+        height: 70px;
+        border-radius: var(--radius-sm);
+        object-fit: cover;
+    }
+
+    .order-item-info {
+        flex: 1;
+    }
+
+    .order-item-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-item-category {
+        font-size: 0.8rem;
+        color: var(--color-terracotta);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .order-item-qty {
+        font-size: 0.85rem;
+        color: var(--color-warm-gray);
+        margin-top: 0.25rem;
+    }
+
+    .order-item-price {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--color-charcoal);
+    }
+
+    /* Summary Sidebar */
+    .order-summary {
+        position: sticky;
+        top: 100px;
+    }
+
+    .summary-section {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 1rem;
+    }
+
+    .summary-section-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--color-charcoal);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .summary-row.total {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--color-light-gray);
+    }
+
+    .summary-row.total span:last-child {
+        color: var(--color-terracotta);
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+    }
+
+    .delivery-info {
+        font-size: 0.9rem;
+        color: var(--color-warm-gray);
+        line-height: 1.6;
+    }
+
+    .delivery-address {
+        background: var(--color-cream);
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        margin-top: 0.75rem;
+        font-size: 0.95rem;
+        color: var(--color-charcoal);
+    }
+
+    .help-btn {
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+        .order-detail-container {
+            grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+            position: static;
+        }
+
+        .order-detail-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('orders') }}" class="back-link">
+    ← Retour aux commandes
+</a>
+
+<div class="order-detail-container">
+    <div class="order-main">
+        <!-- Header -->
+        <div class="detail-card">
+            <div class="order-detail-header">
+                <div>
+                    <h1 class="order-id">Commande #{{ order.id }}</h1>
+                    <p class="order-meta">Passée le {{ order.created_at.strftime('%d/%m/%Y à %H:%M') }}</p>
+                </div>
+                <span class="status-badge-large status-{{ order.status }}">
+                    {% if order.status == 'paiement_en_cours' %}💳 Paiement en cours
+                    {% elif order.status == 'en_attente' %}⏳ En attente
+                    {% elif order.status == 'en_preparation' %}👨‍🍳 En préparation
+                    {% elif order.status == 'en_livraison' %}🚴 En livraison
+                    {% elif order.status == 'livree' %}✓ Livrée
+                    {% elif order.status == 'annulee' %}✕ Annulée
+                    {% endif %}
+                </span>
+            </div>
+            
+            <!-- Statut du paiement -->
+            {% if order.payment_status %}
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-light-gray);">
+                <span style="font-size: 0.85rem; color: var(--color-warm-gray);">Paiement : </span>
+                {% if order.payment_status == 'paid' %}
+                    <span style="color: #2E7D32; font-weight: 600;">✓ Payé</span>
+                {% elif order.payment_status == 'pending' %}
+                    <span style="color: #F57F17; font-weight: 600;">⏳ En attente</span>
+                {% elif order.payment_status == 'failed' %}
+                    <span style="color: #C62828; font-weight: 600;">✕ Échoué</span>
+                {% elif order.payment_status == 'refunded' %}
+                    <span style="color: #1565C0; font-weight: 600;">↩ Remboursé</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Timeline -->
+        <div class="detail-card">
+            <h2 class="detail-card-title">
+                📍 Suivi de votre commande
+            </h2>
+            <div class="timeline-vertical">
+                <div class="timeline-item {% if order.status in ['en_attente', 'en_preparation', 'en_livraison', 'livree'] %}completed{% endif %}">
+                    <div class="timeline-marker">✓</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Commande confirmée</div>
+                        <div class="timeline-desc">{{ order.created_at.strftime('%d/%m/%Y à %H:%M') }}</div>
+                    </div>
+                </div>
+                <div class="timeline-item {% if order.status in ['en_preparation', 'en_livraison', 'livree'] %}completed{% endif %} {% if order.status == 'en_preparation' %}active{% endif %}">
+                    <div class="timeline-marker">👨‍🍳</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">En cours de préparation</div>
+                        <div class="timeline-desc">Nos chefs préparent vos plats avec soin</div>
+                    </div>
+                </div>
+                <div class="timeline-item {% if order.status in ['en_livraison', 'livree'] %}completed{% endif %} {% if order.status == 'en_livraison' %}active{% endif %}">
+                    <div class="timeline-marker">🚴</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">En cours de livraison</div>
+                        <div class="timeline-desc">Votre commande est en route !</div>
+                    </div>
+                </div>
+                <div class="timeline-item {% if order.status == 'livree' %}completed{% endif %}">
+                    <div class="timeline-marker">🏠</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Livrée</div>
+                        <div class="timeline-desc">Bon appétit !</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items -->
+        <div class="detail-card">
+            <h2 class="detail-card-title">
+                🍽️ Articles commandés
+            </h2>
+            <div class="order-items-list">
+                {% for item in order.items %}
+                    <div class="order-item-detail">
+                        <img src="{{ item.meal.image_url or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=140' }}" 
+                             alt="{{ item.meal.name }}"
+                             class="order-item-img">
+                        <div class="order-item-info">
+                            <div class="order-item-category">{{ item.meal.category }}</div>
+                            <div class="order-item-name">{{ item.meal.name }}</div>
+                            <div class="order-item-qty">Quantité : {{ item.quantity }} × {{ "%.2f"|format(item.unit_price) }} €</div>
+                        </div>
+                        <div class="order-item-price">{{ "%.2f"|format(item.quantity * item.unit_price) }} €</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="order-summary">
+        <div class="summary-section">
+            <h3 class="summary-section-title">💰 Récapitulatif</h3>
+            <div class="summary-row">
+                <span>Sous-total</span>
+                <span>{{ "%.2f"|format(order.total_price - 1.50) }} €</span>
+            </div>
+            <div class="summary-row">
+                <span>Livraison</span>
+                <span style="color: var(--color-olive);">Gratuit</span>
+            </div>
+            <div class="summary-row">
+                <span>Frais de service</span>
+                <span>1.50 €</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total payé</span>
+                <span>{{ "%.2f"|format(order.total_price) }} €</span>
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <h3 class="summary-section-title">📍 Adresse de livraison</h3>
+            <div class="delivery-info">
+                <div class="delivery-address">
+                    {{ order.delivery_address or current_user.address or 'Non spécifiée' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <h3 class="summary-section-title">📞 Besoin d'aide ?</h3>
+            <p class="delivery-info">
+                Un problème avec votre commande ? Notre équipe est là pour vous aider.
+            </p>
+            <a href="#" class="btn btn-secondary btn-small help-btn">
+                Contacter le support
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

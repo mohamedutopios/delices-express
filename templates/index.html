@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block title %}Menu{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(135deg, var(--color-terracotta) 0%, var(--color-terracotta-dark) 100%);
+        border-radius: var(--radius-lg);
+        padding: 4rem 3rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: 20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+    }
+
+    .hero h1 {
+        font-family: var(--font-display);
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+    /* Category Filter */
+    .category-filter {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.25rem;
+        border: 2px solid var(--color-light-gray);
+        background: transparent;
+        border-radius: 25px;
+        font-family: var(--font-body);
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--color-charcoal);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        border-color: var(--color-terracotta);
+        background: var(--color-terracotta);
+        color: white;
+    }
+
+    /* Meals Grid */
+    .meals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .meal-card {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meal-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .meal-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .meal-card:hover .meal-image {
+        transform: scale(1.05);
+    }
+
+    .meal-image-wrapper {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .meal-badges {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .meal-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meal-category {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--color-terracotta);
+        margin-bottom: 0.5rem;
+    }
+
+    .meal-name {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--color-charcoal);
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .meal-description {
+        color: var(--color-warm-gray);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        flex: 1;
+    }
+
+    .meal-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: var(--color-warm-gray);
+        margin-bottom: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-light-gray);
+    }
+
+    .meal-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .meal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .meal-price {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-terracotta);
+    }
+
+    .meal-price span {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--color-warm-gray);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--color-warm-gray);
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    /* Animations */
+    .meal-card {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .meal-card:nth-child(1) { animation-delay: 0.1s; }
+    .meal-card:nth-child(2) { animation-delay: 0.15s; }
+    .meal-card:nth-child(3) { animation-delay: 0.2s; }
+    .meal-card:nth-child(4) { animation-delay: 0.25s; }
+    .meal-card:nth-child(5) { animation-delay: 0.3s; }
+    .meal-card:nth-child(6) { animation-delay: 0.35s; }
+    .meal-card:nth-child(7) { animation-delay: 0.4s; }
+    .meal-card:nth-child(8) { animation-delay: 0.45s; }
+
+    @media (max-width: 768px) {
+        .hero {
+            padding: 2.5rem 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+        }
+
+        .hero-stats {
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .meals-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Des repas délicieux, livrés chez vous</h1>
+        <p>Découvrez notre sélection de plats préparés par nos chefs, livrés en moins de 45 minutes directement à votre porte.</p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register') }}" class="btn" style="background: white; color: var(--color-terracotta);">
+                Commencer maintenant →
+            </a>
+        {% endif %}
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-value">{{ meals|length }}</div>
+                <div class="stat-label">Plats disponibles</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">45</div>
+                <div class="stat-label">Min de livraison</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">4.9</div>
+                <div class="stat-label">Note moyenne</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Category Filter -->
+<div class="category-filter">
+    <button class="filter-btn active" data-category="all">Tous les plats</button>
+    {% for category in categories %}
+        <button class="filter-btn" data-category="{{ category }}">{{ category }}</button>
+    {% endfor %}
+</div>
+
+<!-- Meals Grid -->
+{% if meals %}
+    <section class="meals-grid" id="meals-grid">
+        {% for meal in meals %}
+            <article class="meal-card" data-category="{{ meal.category }}">
+                <div class="meal-image-wrapper">
+                    <img src="{{ meal.image_url or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' }}" 
+                         alt="{{ meal.name }}" 
+                         class="meal-image"
+                         loading="lazy">
+                    <div class="meal-badges">
+                        {% if meal.is_vegan %}
+                            <span class="badge badge-vegan">🌱 Vegan</span>
+                        {% elif meal.is_vegetarian %}
+                            <span class="badge badge-vegetarian">🥬 Végé</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="meal-content">
+                    <span class="meal-category">{{ meal.category }}</span>
+                    <h3 class="meal-name">{{ meal.name }}</h3>
+                    <p class="meal-description">{{ meal.description[:120] }}{% if meal.description|length > 120 %}...{% endif %}</p>
+                    <div class="meal-meta">
+                        <span>⏱️ {{ meal.preparation_time }} min</span>
+                        {% if meal.calories %}
+                            <span>🔥 {{ meal.calories }} kcal</span>
+                        {% endif %}
+                    </div>
+                    <div class="meal-footer">
+                        <div class="meal-price">
+                            {{ "%.2f"|format(meal.price) }} € <span>/ portion</span>
+                        </div>
+                        {% if current_user.is_authenticated %}
+                            <form action="{{ url_for('add_to_cart', meal_id=meal.id) }}" method="POST" style="margin: 0;">
+                                <button type="submit" class="btn btn-primary btn-small">
+                                    + Ajouter
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-outline btn-small">
+                                Connexion
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">🍽️</div>
+        <h3>Aucun repas disponible</h3>
+        <p>Revenez bientôt pour découvrir nos nouveaux plats !</p>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Category filtering
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const mealCards = document.querySelectorAll('.meal-card');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active button
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const category = btn.dataset.category;
+
+            // Filter meals
+            mealCards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                    card.style.animation = 'fadeInUp 0.5s ease-out forwards';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Update cart count after adding
+    document.querySelectorAll('form[action^="/add_to_cart"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            setTimeout(updateCartCount, 500);
+        });
+    });
+</script>
+{% endblock %}

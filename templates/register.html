@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 520px;
+        margin: 2rem auto;
+    }
+
+    .auth-card {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-medium);
+        overflow: hidden;
+    }
+
+    .auth-header {
+        background: linear-gradient(135deg, var(--color-olive), var(--color-olive-light));
+        padding: 2.5rem;
+        text-align: center;
+        color: white;
+    }
+
+    .auth-header-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+    }
+
+    .auth-header h1 {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .auth-body {
+        padding: 2.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--color-olive);
+        margin-top: 0.2rem;
+    }
+
+    .checkbox-group label {
+        font-size: 0.85rem;
+        color: var(--color-warm-gray);
+        cursor: pointer;
+        line-height: 1.5;
+    }
+
+    .checkbox-group a {
+        color: var(--color-terracotta);
+        text-decoration: none;
+    }
+
+    .auth-footer {
+        text-align: center;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-light-gray);
+        margin-top: 1.5rem;
+    }
+
+    .auth-footer p {
+        color: var(--color-warm-gray);
+        font-size: 0.95rem;
+    }
+
+    .auth-footer a {
+        color: var(--color-terracotta);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .btn-full {
+        width: 100%;
+    }
+
+    .btn-olive {
+        background: linear-gradient(135deg, var(--color-olive), var(--color-olive-light));
+        color: white;
+        box-shadow: 0 4px 15px rgba(107, 123, 92, 0.3);
+    }
+
+    .btn-olive:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(107, 123, 92, 0.4);
+    }
+
+    .form-input-icon {
+        position: relative;
+    }
+
+    .form-input-icon input {
+        padding-left: 3rem;
+    }
+
+    .form-input-icon .icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        opacity: 0.5;
+    }
+
+    .benefits-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(107, 123, 92, 0.05);
+        border-radius: var(--radius-md);
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--color-charcoal);
+    }
+
+    .benefit-icon {
+        color: var(--color-olive);
+    }
+
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .benefits-list {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-header-icon">🍴</div>
+            <h1>Rejoignez-nous !</h1>
+            <p>Créez votre compte et commandez en quelques clics</p>
+        </div>
+        <div class="auth-body">
+            <div class="benefits-list">
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Livraison rapide</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Suivi en temps réel</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Plats frais et variés</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Historique de commandes</span>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('register') }}">
+                <div class="form-group">
+                    <label class="form-label" for="username">Nom d'utilisateur</label>
+                    <div class="form-input-icon">
+                        <span class="icon">👤</span>
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               class="form-input" 
+                               placeholder="VotreNom"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Adresse email</label>
+                    <div class="form-input-icon">
+                        <span class="icon">📧</span>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               class="form-input" 
+                               placeholder="votre@email.com"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="password">Mot de passe</label>
+                        <div class="form-input-icon">
+                            <span class="icon">🔒</span>
+                            <input type="password" 
+                                   id="password" 
+                                   name="password" 
+                                   class="form-input" 
+                                   placeholder="••••••••"
+                                   minlength="6"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirm_password">Confirmer</label>
+                        <div class="form-input-icon">
+                            <span class="icon">🔒</span>
+                            <input type="password" 
+                                   id="confirm_password" 
+                                   name="confirm_password" 
+                                   class="form-input" 
+                                   placeholder="••••••••"
+                                   minlength="6"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="address">Adresse de livraison</label>
+                    <div class="form-input-icon">
+                        <span class="icon">📍</span>
+                        <input type="text" 
+                               id="address" 
+                               name="address" 
+                               class="form-input"
+                               style="padding-left: 3rem;"
+                               placeholder="Commencez à taper votre adresse..."
+                               data-address-autocomplete
+                               autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="phone">Téléphone</label>
+                    <div class="form-input-icon">
+                        <span class="icon">📱</span>
+                        <input type="tel" 
+                               id="phone" 
+                               name="phone" 
+                               class="form-input" 
+                               placeholder="06 12 34 56 78">
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        J'accepte les <a href="#">conditions d'utilisation</a> et la <a href="#">politique de confidentialité</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-olive btn-full">
+                    Créer mon compte →
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Déjà inscrit ? <a href="{{ url_for('login') }}">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

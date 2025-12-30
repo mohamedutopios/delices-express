@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}Finaliser la commande{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-container {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+    }
+
+    .checkout-section {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 1.5rem;
+    }
+
+    .checkout-section-title {
+        font-family: var(--font-display);
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-light-gray);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-number {
+        width: 30px;
+        height: 30px;
+        background: var(--color-terracotta);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    /* Order Summary */
+    .order-summary {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        position: sticky;
+        top: 100px;
+    }
+
+    .summary-title {
+        font-family: var(--font-display);
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .summary-items {
+        border-bottom: 1px solid var(--color-light-gray);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item-image {
+        width: 60px;
+        height: 60px;
+        border-radius: var(--radius-sm);
+        object-fit: cover;
+    }
+
+    .summary-item-details {
+        flex: 1;
+    }
+
+    .summary-item-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .summary-item-qty {
+        font-size: 0.8rem;
+        color: var(--color-warm-gray);
+    }
+
+    .summary-item-price {
+        font-weight: 600;
+        color: var(--color-charcoal);
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .summary-row.total {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--color-light-gray);
+    }
+
+    .summary-row.total span:last-child {
+        color: var(--color-terracotta);
+        font-family: var(--font-display);
+    }
+
+    /* User Info Display */
+    .user-info {
+        background: var(--color-cream);
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1rem;
+    }
+
+    .user-info-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .user-info-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .user-info-label {
+        color: var(--color-warm-gray);
+        min-width: 80px;
+    }
+
+    /* Delivery Time Selection */
+    .time-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .time-option {
+        border: 2px solid var(--color-light-gray);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .time-option:hover,
+    .time-option.selected {
+        border-color: var(--color-terracotta);
+        background: rgba(196, 112, 75, 0.05);
+    }
+
+    .time-option input {
+        display: none;
+    }
+
+    .time-option-label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .time-option-sub {
+        font-size: 0.8rem;
+        color: var(--color-warm-gray);
+    }
+
+    /* Payment Methods */
+    .payment-options {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .payment-option {
+        border: 2px solid var(--color-light-gray);
+        border-radius: var(--radius-md);
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .payment-option:hover,
+    .payment-option.selected {
+        border-color: var(--color-terracotta);
+        background: rgba(196, 112, 75, 0.05);
+    }
+
+    .payment-option input {
+        display: none;
+    }
+
+    .payment-icon {
+        font-size: 1.5rem;
+    }
+
+    .payment-details {
+        flex: 1;
+    }
+
+    .payment-name {
+        font-weight: 600;
+        margin-bottom: 0.15rem;
+    }
+
+    .payment-desc {
+        font-size: 0.8rem;
+        color: var(--color-warm-gray);
+    }
+
+    .payment-check {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--color-light-gray);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .payment-option.selected .payment-check {
+        background: var(--color-terracotta);
+        border-color: var(--color-terracotta);
+        color: white;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+    }
+
+    .secure-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        font-size: 0.85rem;
+        color: var(--color-warm-gray);
+    }
+
+    @media (max-width: 900px) {
+        .checkout-container {
+            grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+            position: static;
+            order: -1;
+        }
+
+        .time-options {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="section-title mb-4">Finaliser la commande</h1>
+
+<form method="POST" action="{{ url_for('checkout') }}">
+    <div class="checkout-container">
+        <div class="checkout-main">
+            <!-- Delivery Address -->
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">
+                    <span class="section-number">1</span>
+                    Adresse de livraison
+                </h2>
+                
+                <div class="user-info">
+                    <div class="user-info-row">
+                        <span class="user-info-label">👤 Client</span>
+                        <span>{{ current_user.username }}</span>
+                    </div>
+                    <div class="user-info-row">
+                        <span class="user-info-label">📧 Email</span>
+                        <span>{{ current_user.email }}</span>
+                    </div>
+                    {% if current_user.phone %}
+                    <div class="user-info-row">
+                        <span class="user-info-label">📱 Tél</span>
+                        <span>{{ current_user.phone }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="delivery_address">Adresse complète</label>
+                    <input type="text" 
+                           id="delivery_address" 
+                           name="delivery_address" 
+                           class="form-input"
+                           value="{{ current_user.address or '' }}"
+                           placeholder="Commencez à taper votre adresse..."
+                           data-address-autocomplete
+                           autocomplete="off"
+                           required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" for="delivery_instructions">Instructions de livraison (optionnel)</label>
+                    <input type="text" 
+                           id="delivery_instructions" 
+                           name="delivery_instructions" 
+                           class="form-input"
+                           placeholder="Code d'entrée, étage, digicode...">
+                </div>
+            </div>
+
+            <!-- Delivery Time -->
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">
+                    <span class="section-number">2</span>
+                    Heure de livraison
+                </h2>
+                
+                <div class="time-options">
+                    <label class="time-option selected">
+                        <input type="radio" name="delivery_time" value="asap" checked>
+                        <span class="time-option-label">🚀 Dès que possible</span>
+                        <span class="time-option-sub">30-45 min</span>
+                    </label>
+                    <label class="time-option">
+                        <input type="radio" name="delivery_time" value="12h">
+                        <span class="time-option-label">🕐 12h00 - 12h30</span>
+                        <span class="time-option-sub">Midi</span>
+                    </label>
+                    <label class="time-option">
+                        <input type="radio" name="delivery_time" value="19h">
+                        <span class="time-option-label">🌙 19h00 - 19h30</span>
+                        <span class="time-option-sub">Dîner</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="checkout-section">
+                <h2 class="checkout-section-title">
+                    <span class="section-number">3</span>
+                    Mode de paiement
+                </h2>
+                
+                <div class="payment-options">
+                    <label class="payment-option selected">
+                        <input type="radio" name="payment" value="card" checked>
+                        <span class="payment-icon">💳</span>
+                        <div class="payment-details">
+                            <span class="payment-name">Carte bancaire</span>
+                            <span class="payment-desc">Visa, Mastercard, CB</span>
+                        </div>
+                        <span class="payment-check">✓</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="paypal">
+                        <span class="payment-icon">🅿️</span>
+                        <div class="payment-details">
+                            <span class="payment-name">PayPal</span>
+                            <span class="payment-desc">Paiement sécurisé</span>
+                        </div>
+                        <span class="payment-check">✓</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="cash">
+                        <span class="payment-icon">💵</span>
+                        <div class="payment-details">
+                            <span class="payment-name">Espèces</span>
+                            <span class="payment-desc">À la livraison</span>
+                        </div>
+                        <span class="payment-check">✓</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h3 class="summary-title">Votre commande</h3>
+            
+            <div class="summary-items">
+                {% for item in items %}
+                    <div class="summary-item">
+                        <img src="{{ item.meal.image_url or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100' }}" 
+                             alt="{{ item.meal.name }}"
+                             class="summary-item-image">
+                        <div class="summary-item-details">
+                            <div class="summary-item-name">{{ item.meal.name }}</div>
+                            <div class="summary-item-qty">x{{ item.quantity }}</div>
+                        </div>
+                        <span class="summary-item-price">{{ "%.2f"|format(item.total) }} €</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="summary-row">
+                <span>Sous-total</span>
+                <span>{{ "%.2f"|format(total) }} €</span>
+            </div>
+            <div class="summary-row">
+                <span>Livraison</span>
+                <span style="color: var(--color-olive);">Gratuit</span>
+            </div>
+            <div class="summary-row">
+                <span>Frais de service</span>
+                <span>1.50 €</span>
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>{{ "%.2f"|format(total + 1.50) }} €</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary submit-btn" id="submit-btn">
+                <span id="btn-text">Confirmer et payer →</span>
+                <span id="btn-loading" style="display: none;">
+                    <span class="loading"></span> Redirection...
+                </span>
+            </button>
+
+            <div class="secure-badge">
+                🔒 Paiement 100% sécurisé
+            </div>
+            
+            <div class="payment-logos" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; opacity: 0.6;">
+                <span style="font-size: 0.8rem; color: var(--color-warm-gray);">Powered by</span>
+                <svg viewBox="0 0 60 25" style="height: 20px;" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#635BFF" d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a8.33 8.33 0 0 1-4.56 1.1c-4.01 0-6.83-2.5-6.83-7.48 0-4.19 2.39-7.52 6.3-7.52 3.92 0 5.96 3.28 5.96 7.5 0 .4-.02 1.04-.06 1.48zm-6.3-5.63c-1.03 0-2.1.82-2.1 2.87h4.09c0-2.07-1.02-2.87-1.99-2.87zM41.24 20.57V5.56h3.65l.25 1.36c1.22-1.1 2.62-1.67 3.9-1.67v3.88c-.22-.04-.5-.06-.85-.06-.95 0-2.12.45-2.77 1.03v10.47h-4.18zm-7.4 0V.5h4.2v20.07h-4.2zm-9.5 0V5.56h3.7l.2 1.1c1.1-.87 2.6-1.36 3.92-1.36 3.4 0 4.94 2.24 4.94 5.88v9.39h-4.18v-8.8c0-1.7-.7-2.65-2.1-2.65-.93 0-1.93.49-2.34.98v10.47h-4.14zm-7.4 0V5.56h3.65l.25 1.36c1.22-1.1 2.62-1.67 3.9-1.67v3.88c-.22-.04-.5-.06-.85-.06-.95 0-2.12.45-2.77 1.03v10.47h-4.18zM5.34 20.57V.5h4.14v7.4c.86-.67 2.1-1.16 3.42-1.16 3.4 0 5.37 2.79 5.37 6.96 0 5.1-2.43 7.38-6.04 7.38-1.13 0-2.24-.3-3-.73l-.24.72H5.34zm4.14-4.32c.52.38 1.3.66 1.97.66 1.73 0 2.53-1.26 2.53-3.64 0-2.15-.73-3.47-2.35-3.47-.79 0-1.58.36-2.15.85v5.6z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Time option selection
+    document.querySelectorAll('.time-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.time-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+
+    // Payment option selection
+    document.querySelectorAll('.payment-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+    
+    // Gérer le bouton de soumission
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoading = document.getElementById('btn-loading');
+        const selectedPayment = document.querySelector('input[name="payment"]:checked');
+        
+        // Si paiement par carte, montrer le loading
+        if (selectedPayment && selectedPayment.value === 'card') {
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-flex';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+
+{% block title %}Mon Panier{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .cart-container {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 2rem;
+    }
+
+    .cart-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .cart-item {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        box-shadow: var(--shadow-soft);
+        display: flex;
+        gap: 1.25rem;
+        align-items: center;
+        transition: var(--transition);
+    }
+
+    .cart-item:hover {
+        box-shadow: var(--shadow-medium);
+    }
+
+    .cart-item-image {
+        width: 100px;
+        height: 100px;
+        border-radius: var(--radius-md);
+        object-fit: cover;
+    }
+
+    .cart-item-details {
+        flex: 1;
+    }
+
+    .cart-item-name {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--color-charcoal);
+        margin-bottom: 0.25rem;
+    }
+
+    .cart-item-category {
+        font-size: 0.8rem;
+        color: var(--color-terracotta);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .cart-item-price {
+        font-weight: 600;
+        color: var(--color-charcoal);
+        margin-top: 0.5rem;
+    }
+
+    .cart-item-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.75rem;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--color-cream);
+        padding: 0.25rem;
+        border-radius: var(--radius-md);
+    }
+
+    .quantity-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: var(--color-warm-white);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--color-charcoal);
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quantity-btn:hover {
+        background: var(--color-terracotta);
+        color: white;
+    }
+
+    .quantity-value {
+        min-width: 40px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .remove-btn {
+        background: none;
+        border: none;
+        color: var(--color-warm-gray);
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: var(--transition);
+    }
+
+    .remove-btn:hover {
+        color: #E53935;
+    }
+
+    .cart-item-total {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-terracotta);
+    }
+
+    /* Summary Card */
+    .cart-summary {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .summary-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-light-gray);
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .summary-row.total {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid var(--color-light-gray);
+    }
+
+    .summary-row.total span:last-child {
+        color: var(--color-terracotta);
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+    }
+
+    .checkout-btn {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .continue-shopping {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: var(--color-warm-gray);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .continue-shopping:hover {
+        color: var(--color-terracotta);
+    }
+
+    /* Empty Cart */
+    .empty-cart {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .empty-cart-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    .empty-cart h2 {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-charcoal);
+    }
+
+    .empty-cart p {
+        color: var(--color-warm-gray);
+        margin-bottom: 2rem;
+    }
+
+    /* Promo Code */
+    .promo-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-light-gray);
+    }
+
+    .promo-input-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .promo-input {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--color-light-gray);
+        border-radius: var(--radius-sm);
+        font-family: var(--font-body);
+    }
+
+    .promo-btn {
+        padding: 0.75rem 1rem;
+        background: var(--color-charcoal);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .promo-btn:hover {
+        background: var(--color-terracotta);
+    }
+
+    @media (max-width: 900px) {
+        .cart-container {
+            grid-template-columns: 1fr;
+        }
+
+        .cart-summary {
+            position: static;
+        }
+
+        .cart-item {
+            flex-wrap: wrap;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-header">
+    <h1 class="section-title">Mon Panier</h1>
+    {% if items %}
+        <span style="color: var(--color-warm-gray);">{{ items|length }} article{% if items|length > 1 %}s{% endif %}</span>
+    {% endif %}
+</div>
+
+<div class="cart-container">
+    {% if items %}
+        <div class="cart-items">
+            {% for item in items %}
+                <div class="cart-item">
+                    <img src="{{ item.meal.image_url or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200' }}" 
+                         alt="{{ item.meal.name }}" 
+                         class="cart-item-image">
+                    <div class="cart-item-details">
+                        <span class="cart-item-category">{{ item.meal.category }}</span>
+                        <h3 class="cart-item-name">{{ item.meal.name }}</h3>
+                        <p class="cart-item-price">{{ "%.2f"|format(item.meal.price) }} € / portion</p>
+                    </div>
+                    <div class="cart-item-actions">
+                        <div class="quantity-control">
+                            <form action="{{ url_for('update_cart', meal_id=item.meal.id) }}" method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="decrease">
+                                <button type="submit" class="quantity-btn">−</button>
+                            </form>
+                            <span class="quantity-value">{{ item.quantity }}</span>
+                            <form action="{{ url_for('update_cart', meal_id=item.meal.id) }}" method="POST" style="display: inline;">
+                                <input type="hidden" name="action" value="increase">
+                                <button type="submit" class="quantity-btn">+</button>
+                            </form>
+                        </div>
+                        <span class="cart-item-total">{{ "%.2f"|format(item.total) }} €</span>
+                        <form action="{{ url_for('update_cart', meal_id=item.meal.id) }}" method="POST" style="display: inline;">
+                            <input type="hidden" name="action" value="remove">
+                            <button type="submit" class="remove-btn">🗑️ Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <h3 class="summary-title">Récapitulatif</h3>
+            
+            <div class="summary-row">
+                <span>Sous-total</span>
+                <span>{{ "%.2f"|format(total) }} €</span>
+            </div>
+            <div class="summary-row">
+                <span>Livraison</span>
+                <span style="color: var(--color-olive);">Gratuit</span>
+            </div>
+            <div class="summary-row">
+                <span>Frais de service</span>
+                <span>1.50 €</span>
+            </div>
+            
+            <div class="summary-row total">
+                <span>Total</span>
+                <span>{{ "%.2f"|format(total + 1.50) }} €</span>
+            </div>
+
+            <div class="promo-section">
+                <p style="font-size: 0.9rem; color: var(--color-warm-gray); margin-bottom: 0.75rem;">Code promo</p>
+                <div class="promo-input-group">
+                    <input type="text" class="promo-input" placeholder="Entrez votre code">
+                    <button class="promo-btn">OK</button>
+                </div>
+            </div>
+
+            <a href="{{ url_for('checkout') }}" class="btn btn-primary checkout-btn">
+                Passer la commande →
+            </a>
+            <a href="{{ url_for('index') }}" class="continue-shopping">
+                ← Continuer mes achats
+            </a>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <h2>Votre panier est vide</h2>
+            <p>Découvrez nos délicieux plats et commencez à commander !</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                Voir le menu →
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

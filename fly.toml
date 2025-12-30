@@ -1,0 +1,35 @@
+# Fly.io Configuration
+# Déployer avec: fly launch puis fly deploy
+
+app = "delice-express"
+primary_region = "cdg"  # Paris
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  FLASK_ENV = "production"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 5000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+
+# Volume pour la persistance SQLite (optionnel)
+# Créer avec: fly volumes create delice_data --size 1 --region cdg
+# [[mounts]]
+#   source = "delice_data"
+#   destination = "/app/data"

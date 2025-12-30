@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Commandes{% endblock %}
+
+{% block extra_css %}
+<style>
+    .orders-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .order-card {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        transition: var(--transition);
+    }
+
+    .order-card:hover {
+        box-shadow: var(--shadow-medium);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--color-cream);
+        border-bottom: 1px solid var(--color-light-gray);
+    }
+
+    .order-info {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .order-number {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-charcoal);
+    }
+
+    .order-date {
+        font-size: 0.9rem;
+        color: var(--color-warm-gray);
+    }
+
+    .order-body {
+        padding: 1.5rem;
+    }
+
+    .order-items-preview {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .order-item-mini {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--color-cream);
+        padding: 0.5rem 1rem 0.5rem 0.5rem;
+        border-radius: var(--radius-md);
+        white-space: nowrap;
+    }
+
+    .order-item-mini-img {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-sm);
+        object-fit: cover;
+    }
+
+    .order-item-mini-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .order-item-mini-qty {
+        font-size: 0.75rem;
+        color: var(--color-warm-gray);
+    }
+
+    .order-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-light-gray);
+    }
+
+    .order-total {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-terracotta);
+    }
+
+    .order-total-label {
+        font-size: 0.85rem;
+        color: var(--color-warm-gray);
+        font-weight: 400;
+        margin-right: 0.5rem;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-en_attente {
+        background: #FFF8E1;
+        color: #F57F17;
+    }
+
+    .status-paiement_en_cours {
+        background: #E3F2FD;
+        color: #1565C0;
+    }
+
+    .status-en_preparation {
+        background: #E3F2FD;
+        color: #1565C0;
+    }
+
+    .status-en_livraison {
+        background: #F3E5F5;
+        color: #7B1FA2;
+    }
+
+    .status-livree {
+        background: #E8F5E9;
+        color: #2E7D32;
+    }
+
+    .status-annulee {
+        background: #FFEBEE;
+        color: #C62828;
+    }
+
+    /* Empty State */
+    .empty-orders {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .empty-orders-icon {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    .empty-orders h2 {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-charcoal);
+    }
+
+    .empty-orders p {
+        color: var(--color-warm-gray);
+        margin-bottom: 2rem;
+    }
+
+    /* Order Timeline */
+    .order-timeline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1rem 0;
+        padding: 0 1rem;
+    }
+
+    .timeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        position: relative;
+    }
+
+    .timeline-step::after {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        width: 100%;
+        height: 2px;
+        background: var(--color-light-gray);
+        z-index: 0;
+    }
+
+    .timeline-step:last-child::after {
+        display: none;
+    }
+
+    .timeline-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--color-light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        z-index: 1;
+        position: relative;
+    }
+
+    .timeline-step.completed .timeline-icon {
+        background: var(--color-olive);
+        color: white;
+    }
+
+    .timeline-step.active .timeline-icon {
+        background: var(--color-terracotta);
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .timeline-label {
+        font-size: 0.7rem;
+        color: var(--color-warm-gray);
+        text-align: center;
+    }
+
+    .timeline-step.completed .timeline-label,
+    .timeline-step.active .timeline-label {
+        color: var(--color-charcoal);
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .order-info {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .order-timeline {
+            padding: 0;
+        }
+
+        .timeline-label {
+            font-size: 0.6rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-header">
+    <div>
+        <h1 class="section-title">Mes Commandes</h1>
+        <p class="section-subtitle">Suivez l'état de vos commandes en temps réel</p>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-outline">
+        Nouvelle commande →
+    </a>
+</div>
+
+{% if orders %}
+    <div class="orders-list">
+        {% for order in orders %}
+            <article class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <span class="order-number">Commande #{{ order.id }}</span>
+                        <span class="order-date">{{ order.created_at.strftime('%d/%m/%Y à %H:%M') }}</span>
+                    </div>
+                    <span class="status-badge status-{{ order.status }}">
+                        {% if order.status == 'paiement_en_cours' %}💳 Paiement
+                        {% elif order.status == 'en_attente' %}⏳ En attente
+                        {% elif order.status == 'en_preparation' %}👨‍🍳 En préparation
+                        {% elif order.status == 'en_livraison' %}🚴 En livraison
+                        {% elif order.status == 'livree' %}✓ Livrée
+                        {% elif order.status == 'annulee' %}✕ Annulée
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="order-body">
+                    <!-- Timeline -->
+                    <div class="order-timeline">
+                        <div class="timeline-step {% if order.status in ['en_attente', 'en_preparation', 'en_livraison', 'livree'] %}completed{% endif %}">
+                            <div class="timeline-icon">✓</div>
+                            <span class="timeline-label">Confirmée</span>
+                        </div>
+                        <div class="timeline-step {% if order.status in ['en_preparation', 'en_livraison', 'livree'] %}completed{% endif %} {% if order.status == 'en_preparation' %}active{% endif %}">
+                            <div class="timeline-icon">👨‍🍳</div>
+                            <span class="timeline-label">Préparation</span>
+                        </div>
+                        <div class="timeline-step {% if order.status in ['en_livraison', 'livree'] %}completed{% endif %} {% if order.status == 'en_livraison' %}active{% endif %}">
+                            <div class="timeline-icon">🚴</div>
+                            <span class="timeline-label">Livraison</span>
+                        </div>
+                        <div class="timeline-step {% if order.status == 'livree' %}completed{% endif %}">
+                            <div class="timeline-icon">🏠</div>
+                            <span class="timeline-label">Livrée</span>
+                        </div>
+                    </div>
+
+                    <!-- Items Preview -->
+                    <div class="order-items-preview">
+                        {% for item in order.items %}
+                            <div class="order-item-mini">
+                                <img src="{{ item.meal.image_url or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100' }}" 
+                                     alt="{{ item.meal.name }}"
+                                     class="order-item-mini-img">
+                                <div>
+                                    <div class="order-item-mini-name">{{ item.meal.name[:20] }}{% if item.meal.name|length > 20 %}...{% endif %}</div>
+                                    <div class="order-item-mini-qty">x{{ item.quantity }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="order-footer">
+                        <div class="order-total">
+                            <span class="order-total-label">Total</span>
+                            {{ "%.2f"|format(order.total_price) }} €
+                        </div>
+                        <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn btn-secondary btn-small">
+                            Voir les détails →
+                        </a>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-orders">
+        <div class="empty-orders-icon">📦</div>
+        <h2>Aucune commande</h2>
+        <p>Vous n'avez pas encore passé de commande. Découvrez nos délicieux plats !</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+            Voir le menu →
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

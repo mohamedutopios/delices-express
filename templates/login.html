@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 480px;
+        margin: 2rem auto;
+    }
+
+    .auth-card {
+        background: var(--color-warm-white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-medium);
+        overflow: hidden;
+    }
+
+    .auth-header {
+        background: linear-gradient(135deg, var(--color-terracotta), var(--color-terracotta-dark));
+        padding: 2.5rem;
+        text-align: center;
+        color: white;
+    }
+
+    .auth-header-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+    }
+
+    .auth-header h1 {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .auth-body {
+        padding: 2.5rem;
+    }
+
+    .form-divider {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        color: var(--color-warm-gray);
+        font-size: 0.85rem;
+    }
+
+    .form-divider::before,
+    .form-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--color-light-gray);
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkbox-group input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--color-terracotta);
+    }
+
+    .checkbox-group label {
+        font-size: 0.9rem;
+        color: var(--color-warm-gray);
+        cursor: pointer;
+    }
+
+    .auth-footer {
+        text-align: center;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-light-gray);
+        margin-top: 1.5rem;
+    }
+
+    .auth-footer p {
+        color: var(--color-warm-gray);
+        font-size: 0.95rem;
+    }
+
+    .auth-footer a {
+        color: var(--color-terracotta);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .btn-full {
+        width: 100%;
+    }
+
+    .form-input-icon {
+        position: relative;
+    }
+
+    .form-input-icon input {
+        padding-left: 3rem;
+    }
+
+    .form-input-icon .icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-header-icon">👋</div>
+            <h1>Bon retour !</h1>
+            <p>Connectez-vous pour commander vos plats préférés</p>
+        </div>
+        <div class="auth-body">
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="form-group">
+                    <label class="form-label" for="email">Adresse email</label>
+                    <div class="form-input-icon">
+                        <span class="icon">📧</span>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               class="form-input" 
+                               placeholder="votre@email.com"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Mot de passe</label>
+                    <div class="form-input-icon">
+                        <span class="icon">🔒</span>
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               class="form-input" 
+                               placeholder="••••••••"
+                               required>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Se souvenir de moi</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    Se connecter →
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Pas encore de compte ? <a href="{{ url_for('register') }}">Créer un compte</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
