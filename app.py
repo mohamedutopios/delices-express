@@ -16,7 +16,6 @@ from datetime import datetime
 import os
 import stripe
 
-
 # ==================== CONFIGURATION ====================
 
 class Config:
@@ -54,10 +53,8 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     """Configuration de production"""
     DEBUG = False
-    # En production, forcer une SECRET_KEY définie
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    if not SECRET_KEY:
-        raise ValueError("SECRET_KEY must be set in production!")
+    # En production, utiliser SECRET_KEY de l'environnement ou générer une clé
+    SECRET_KEY = os.environ.get('SECRET_KEY') or os.urandom(24)
 
 
 class TestingConfig(Config):
