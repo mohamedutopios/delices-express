@@ -42,9 +42,6 @@ USER delice
 # Exposer le port
 EXPOSE 5000
 
-# Volume pour la persistance des données
-VOLUME ["/app/data"]
-
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/')" || exit 1
