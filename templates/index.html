@@ -263,22 +263,196 @@
     .meal-card:nth-child(7) { animation-delay: 0.4s; }
     .meal-card:nth-child(8) { animation-delay: 0.45s; }
 
+    /* Tablette */
+    @media (max-width: 1024px) {
+        .meals-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+        
+        .hero {
+            padding: 3rem 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+    }
+
+    /* Mobile */
     @media (max-width: 768px) {
         .hero {
-            padding: 2.5rem 1.5rem;
+            padding: 2rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius-md);
         }
 
         .hero h1 {
-            font-size: 2rem;
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .hero p {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .hero-stats {
             flex-wrap: wrap;
             gap: 1rem;
+            justify-content: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+        }
+        
+        /* Catégories */
+        .category-filter {
+            padding: 0.75rem;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 0.9rem;
+            font-size: 0.8rem;
+        }
+        
+        /* Section titre */
+        .section-header {
+            margin-bottom: 1.5rem;
         }
 
+        /* Grille de repas */
         .meals-grid {
             grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        /* Carte repas */
+        .meal-card {
+            display: flex;
+            flex-direction: row;
+            height: auto;
+        }
+        
+        .meal-image-container {
+            width: 120px;
+            min-width: 120px;
+            height: 120px;
+        }
+        
+        .meal-image {
+            height: 100%;
+        }
+        
+        .meal-content {
+            padding: 0.75rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .meal-header h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .meal-header .price {
+            font-size: 1rem;
+        }
+        
+        .meal-description {
+            display: none; /* Cache description sur mobile pour gagner de l'espace */
+        }
+        
+        .meal-meta {
+            margin: 0.5rem 0;
+            gap: 0.5rem;
+        }
+        
+        .meta-item {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+        }
+        
+        .meal-actions {
+            margin-top: auto;
+        }
+        
+        .meal-actions .btn {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            width: auto;
+        }
+    }
+    
+    /* Petit mobile */
+    @media (max-width: 480px) {
+        .hero {
+            padding: 1.5rem 1rem;
+        }
+        
+        .hero h1 {
+            font-size: 1.5rem;
+        }
+        
+        .hero p {
+            font-size: 0.9rem;
+        }
+        
+        .hero-stats {
+            gap: 0.75rem;
+        }
+        
+        .stat {
+            min-width: 70px;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+        }
+        
+        .category-filter {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .category-filter::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .filter-btn {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .meal-image-container {
+            width: 100px;
+            min-width: 100px;
+            height: 100px;
+        }
+        
+        .meal-content {
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .meal-header h3 {
+            font-size: 0.9rem;
+        }
+        
+        .meal-header .price {
+            font-size: 0.9rem;
         }
     }
 </style>

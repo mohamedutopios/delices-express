@@ -264,6 +264,7 @@
         background: #E53935;
     }
 
+    /* Tablette */
     @media (max-width: 900px) {
         .profile-container {
             grid-template-columns: 1fr;
@@ -271,6 +272,107 @@
 
         .info-grid {
             grid-template-columns: 1fr;
+        }
+        
+        .profile-sidebar {
+            order: -1;
+        }
+    }
+    
+    /* Mobile */
+    @media (max-width: 768px) {
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem !important;
+        }
+        
+        .profile-sidebar {
+            padding: 1.25rem;
+        }
+        
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            font-size: 1.75rem;
+        }
+        
+        .profile-name {
+            font-size: 1.25rem;
+        }
+        
+        .profile-email {
+            font-size: 0.85rem;
+        }
+        
+        .profile-stats {
+            gap: 1rem;
+        }
+        
+        .profile-stat-value {
+            font-size: 1.25rem;
+        }
+        
+        .profile-stat-label {
+            font-size: 0.7rem;
+        }
+        
+        .member-since {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .profile-card {
+            padding: 1.25rem;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+        }
+        
+        .info-item {
+            padding: 0.75rem;
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+        }
+        
+        .info-value {
+            font-size: 0.9rem;
+        }
+        
+        .form-input {
+            font-size: 16px;
+        }
+        
+        .security-note {
+            font-size: 0.75rem;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    /* Petit mobile */
+    @media (max-width: 480px) {
+        .profile-sidebar {
+            padding: 1rem;
+        }
+        
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+        
+        .profile-card {
+            padding: 1rem;
+        }
+        
+        .info-item {
+            padding: 0.6rem;
         }
     }
 </style>

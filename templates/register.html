@@ -158,13 +158,92 @@
         color: var(--color-olive);
     }
 
+    /* Mobile */
     @media (max-width: 768px) {
+        .auth-container {
+            padding: 1rem;
+        }
+        
+        .auth-card {
+            margin: 0;
+        }
+        
+        .auth-header {
+            padding: 1.5rem 1.25rem;
+        }
+        
+        .auth-header-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+        
+        .auth-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .auth-header p {
+            font-size: 0.9rem;
+        }
+        
+        .auth-body {
+            padding: 1.5rem 1.25rem;
+        }
+        
         .form-row {
             grid-template-columns: 1fr;
+            gap: 0;
         }
 
         .benefits-list {
             grid-template-columns: 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .benefit-item {
+            font-size: 0.85rem;
+        }
+        
+        .form-input {
+            font-size: 16px; /* Prevent iOS zoom */
+        }
+        
+        .btn {
+            padding: 0.875rem;
+            font-size: 1rem;
+        }
+        
+        .auth-footer {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+        }
+    }
+    
+    /* Petit mobile */
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 0.75rem;
+        }
+        
+        .auth-header {
+            padding: 1.25rem 1rem;
+        }
+        
+        .auth-header h1 {
+            font-size: 1.35rem;
+        }
+        
+        .auth-body {
+            padding: 1.25rem 1rem;
+        }
+        
+        .form-label {
+            font-size: 0.85rem;
+        }
+        
+        .form-input {
+            padding: 0.7rem;
         }
     }
 </style>

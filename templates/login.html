@@ -128,6 +128,76 @@
         font-size: 1.1rem;
         opacity: 0.5;
     }
+    
+    /* Mobile */
+    @media (max-width: 768px) {
+        .auth-container {
+            padding: 1rem;
+            margin: 1rem auto;
+        }
+        
+        .auth-header {
+            padding: 1.5rem 1.25rem;
+        }
+        
+        .auth-header-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+        
+        .auth-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .auth-header p {
+            font-size: 0.9rem;
+        }
+        
+        .auth-body {
+            padding: 1.5rem 1.25rem;
+        }
+        
+        .form-input {
+            font-size: 16px; /* Prevent iOS zoom */
+        }
+        
+        .checkbox-group label {
+            font-size: 0.9rem;
+        }
+        
+        .btn-full {
+            padding: 0.875rem;
+            font-size: 1rem;
+        }
+    }
+    
+    /* Petit mobile */
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 0.75rem;
+        }
+        
+        .auth-header {
+            padding: 1.25rem 1rem;
+        }
+        
+        .auth-header h1 {
+            font-size: 1.35rem;
+        }
+        
+        .auth-body {
+            padding: 1.25rem 1rem;
+        }
+        
+        .form-input {
+            padding: 0.7rem;
+        }
+        
+        .form-input-icon input {
+            padding-left: 2.5rem;
+        }
+    }
 </style>
 {% endblock %}
 
